@@ -112,11 +112,4 @@ class CubeConundrum {
   }
 }
 
-function solution(input) {
-  const cubeConundrum = new CubeConundrum(input)
-  cubeConundrum.init()
-
-  return cubeConundrum
-}
-
 module.exports = CubeConundrum
