@@ -9,27 +9,42 @@ class Game {
   redCubesLimit = 12
   greenCubesLimit = 13
   blueCubesLimit = 14
+  Color = {
+    GREEN: 'green',
+    RED: 'red',
+    BLUE: 'blue'
+  }
 
   constructor(id, cubes) {
     this.id = id
     this.subSets = cubes
     this.isValid = this.isValidGame()
+    this.minimumRedCubesSet = this.getMinimumCubesSet(this.Color.RED)
+    this.minumunGreenCubesSet = this.getMinimumCubesSet(this.Color.GREEN)
+    this.minimumBlueCubesSet = this.getMinimumCubesSet(this.Color.BLUE)
+    this.powerMinimumCubesSet =
+      this.minimumRedCubesSet *
+      this.minumunGreenCubesSet *
+      this.minimumBlueCubesSet
   }
 
   isValidGame() {
     const isSomeRedCubesOverLimit = this.subSets.some((cubes) =>
       cubes.some(
-        (cube) => cube.color === 'red' && cube.number > this.redCubesLimit
+        (cube) =>
+          cube.color === this.Color.RED && cube.number > this.redCubesLimit
       )
     )
     const isSomeGreenCubesOverLimit = this.subSets.some((cubes) =>
       cubes.some(
-        (cube) => cube.color === 'green' && cube.number > this.greenCubesLimit
+        (cube) =>
+          cube.color === this.Color.GREEN && cube.number > this.greenCubesLimit
       )
     )
     const isSomeBlueCubesOverLimit = this.subSets.some((cubes) =>
       cubes.some(
-        (cube) => cube.color === 'blue' && cube.number > this.blueCubesLimit
+        (cube) =>
+          cube.color === this.Color.BLUE && cube.number > this.blueCubesLimit
       )
     )
 
@@ -39,6 +54,20 @@ class Game {
       !isSomeBlueCubesOverLimit
     )
   }
+
+  getMinimumCubesSet(color) {
+    let minGreenCubeNumber = 0
+
+    this.subSets.forEach((cubes) => {
+      cubes.forEach((cube) => {
+        if (cube.color === color && cube.number > minGreenCubeNumber) {
+          minGreenCubeNumber = cube.number
+        }
+      })
+    })
+
+    return minGreenCubeNumber
+  }
 }
 
 class CubeConundrum {
@@ -46,6 +75,7 @@ class CubeConundrum {
     this.input = input
     this.games = []
     this.validGamesIdsSum = 0
+    this.minumunPowerSetsSum = 0
   }
 
   convertLineIntoGame(inputLine) {
@@ -64,6 +94,10 @@ class CubeConundrum {
     return new Game(gameId, subSets)
   }
 
+  getSumOfPowerSets() {
+    return this.games.reduce((acc, curr) => acc + curr.powerMinimumCubesSet, 0)
+  }
+
   init() {
     const lines = this.input.split('\n')
     this.games = lines.map((line) => this.convertLineIntoGame(line))
@@ -74,15 +108,15 @@ class CubeConundrum {
             .filter((game) => game.isValid)
             .map((game) => game.id)
             .reduce((acc, curr) => acc + curr)
+    this.minumunPowerSetsSum = this.getSumOfPowerSets()
   }
 }
 
-function solutionPartOne(input) {
+function solution(input) {
   const cubeConundrum = new CubeConundrum(input)
   cubeConundrum.init()
 
   return cubeConundrum
 }
 
-module.exports = solutionPartOne
-// module.exports = solutionPartTwo
+module.exports = CubeConundrum
